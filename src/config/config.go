@@ -66,9 +66,10 @@ func ReadConfig(p string) error {
 
 func findConfigFile() (string, error) {
 	for _, p := range lookupPaths {
-		_, err := os.Stat(gpath.Expand(p))
+		expandedPath := gpath.Expand(p)
+		_, err := os.Stat(expandedPath)
 		if err == nil {
-			return p, nil
+			return expandedPath, nil
 		}
 	}
 	return "", errors.New("config file not found")
