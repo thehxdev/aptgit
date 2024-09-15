@@ -10,11 +10,11 @@
         "386": "i386"
     },
     "tagRegexp": "(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)",
-    "template": "gitleaks_%VERSION%_%PLATFORM%_%ARCH%.tar.gz",
+    "template": "doggo_%VERSION%_%PLATFORM%_%ARCH%.tar.gz",
     "install": [
-        "tar -xzf %FILE% -C %INSTALL_PATH%"
+        "tar -xzf %FILE% -C %INSTALL_PATH% --strip-components=1"
     ],
     "bins": [
-        "gitleaks"
+        "doggo"
     ]
 }
