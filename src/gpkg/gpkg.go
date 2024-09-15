@@ -222,8 +222,8 @@ func (gp *Gpkg) RunInstallSteps(vars map[string]string) error {
 	normalizedCmds := make([][]string, 0)
 	for _, step := range gp.InstallSteps {
 		cmd := make([]string, 0)
-		words := strings.Split(step, " ")
-		for _, word := range words {
+		cmdWords := strings.Split(step, " ")
+		for _, word := range cmdWords {
 			resolved := gvars.ResolveAll(word, vars)
 			if strings.Contains(resolved, " ") {
 				resolved = gpath.Qoute(resolved)
