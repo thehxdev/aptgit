@@ -1,0 +1,18 @@
+{
+    "repository": "neovim/neovim",
+    "platform": {
+        "darwin": "macos"
+    },
+    "arch": {
+        "amd64": "64"
+    },
+    "template": "nvim-%PLATFORM%%ARCH%.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH% --strip-components=1"
+    ],
+    "bins": [
+        "bin/nvim"
+    ]
+}
+
+
