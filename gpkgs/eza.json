@@ -1,0 +1,14 @@
+{
+    "repository": "eza-community/eza",
+    "arch": {
+        "amd64": "x86_64",
+        "arm64": "aarch64"
+    },
+    "template": "eza_%ARCH%-unknown-%PLATFORM%-musl.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH%"
+    ],
+    "bins": [
+        "eza"
+    ]
+}
