@@ -1,0 +1,15 @@
+{
+    "repository": "jgm/pandoc",
+    "platform": {
+        "darwin": "macOS"
+    },
+    "template": "pandoc-%TAGNAME%-%PLATFORM%-%ARCH%.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH% --strip-components=1"
+    ],
+    "bins": [
+        "bin/pandoc",
+        "bin/pandoc-lua",
+        "bin/pandoc-server"
+    ]
+}
