@@ -165,18 +165,18 @@ func (gp *Gpkg) DownloadLatest(outDir string) error {
 	}
 
 	savePath := filepath.Join(outDir, fileName)
-	outFile, err := os.Create(savePath)
+	fp, err := os.Create(savePath)
 	if err != nil {
 		return err
 	}
-	defer outFile.Close()
+	defer fp.Close()
 
 	jobChan := make(chan struct{}, 2)
 	done := make(chan struct{}, 1)
 	log.Inf.Println("Saving to", savePath)
 
 	go func() {
-		_, err = io.Copy(outFile, resp.Body)
+		_, err = io.Copy(fp, resp.Body)
 		if err != nil {
 			log.Err.Fatal(err)
 		}
@@ -188,7 +188,7 @@ func (gp *Gpkg) DownloadLatest(outDir string) error {
 	showProgress:
 		for {
 			time.Sleep(time.Second * 1)
-			stat, err := outFile.Stat()
+			stat, err := fp.Stat()
 			if err != nil {
 				log.Err.Println(err)
 				continue
