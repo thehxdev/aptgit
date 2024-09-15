@@ -1,0 +1,17 @@
+{
+    "repository": "BurntSushi/ripgrep",
+    "arch": {
+        "386": "i686",
+        "amd64": "x86_64",
+        "arm": "armv7",
+        "arm64": "aarch64"
+    },
+    "tagRegexp": "(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)",
+    "template": "ripgrep-%VERSION%-%ARCH%-unknown-%PLATFORM%-musl.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH% --strip-components=1"
+    ],
+    "bins": [
+        "rg"
+    ]
+}
