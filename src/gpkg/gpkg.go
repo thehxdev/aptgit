@@ -250,7 +250,8 @@ func (gp *Gpkg) SymlinkBinaryFiles() error {
 	installDir := path.Join(config.G.InstallPath, gp.Repository)
 	for _, bin := range gp.Bins {
 		srcFile := filepath.Join(installDir, bin)
-		destFile := filepath.Join(config.G.BinPath, bin)
+		_, binFile := filepath.Split(bin)
+		destFile := filepath.Join(config.G.BinPath, binFile)
 		log.Inf.Printf("%s -> %s", srcFile, destFile)
 		err = os.Symlink(srcFile, destFile)
 		if err != nil {
