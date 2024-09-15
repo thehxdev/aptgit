@@ -24,19 +24,23 @@ func init() {
 }
 
 func main() {
-	pdef, err := gpkg.ReadDefinitionFile(pkgDef)
+	installPackage(pkgDef)
+}
+
+func installPackage(defPath string) error {
+	pdef, err := gpkg.ReadDefinitionFile(defPath)
 	if err != nil {
-		log.Err.Fatal(err)
+		return err
 	}
 
 	latestTag, err := pdef.GetLatestTag()
 	if err != nil {
-		log.Err.Fatal(err)
+		return err
 	}
 
 	savedFilePath, err := pdef.DownloadRelease(latestTag)
 	if err != nil {
-		log.Err.Fatal(err)
+		return err
 	}
 
 	err = pdef.RunInstallSteps(map[string]string{
@@ -44,13 +48,10 @@ func main() {
 		"INSTALL_PATH": path.Join(config.G.InstallPath, pdef.Repository),
 	})
 	if err != nil {
-		log.Err.Fatal(err)
+		return err
 	}
 
-	err = pdef.LinkBinaryFiles()
-	if err != nil {
-		log.Err.Fatal(err)
-	}
+	return pdef.SymlinkBinaryFiles()
 }
 
 func parseFlags() {
