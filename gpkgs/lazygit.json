@@ -1,0 +1,20 @@
+{
+    "repository": "jesseduffield/lazygit",
+    "platform": {
+        "darwin": "Darwin",
+        "linux": "Linux"
+    },
+    "arch": {
+        "amd64": "x86_64",
+        "386": "32-bit",
+        "arm": "armv6"
+    },
+    "tagRegexp": "(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)",
+    "template": "lazygit_%VERSION%_%PLATFORM%_%ARCH%.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH%"
+    ],
+    "bins": [
+        "lazygit"
+    ]
+}
