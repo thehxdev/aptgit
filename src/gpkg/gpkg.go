@@ -245,7 +245,7 @@ func (gp *Gpkg) RunInstallSteps(vars map[string]string) error {
 	return nil
 }
 
-func (gp *Gpkg) LinkBinaryFiles() error {
+func (gp *Gpkg) SymlinkBinaryFiles() error {
 	var err error = nil
 	installDir := path.Join(config.G.InstallPath, gp.Repository)
 	for _, bin := range gp.Bins {
