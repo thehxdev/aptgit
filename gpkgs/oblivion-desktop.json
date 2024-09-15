@@ -1,0 +1,17 @@
+{
+    "repository": "bepass-org/oblivion-desktop",
+    "platform": {
+        "darwin": "mac"
+    },
+    "arch": {
+        "amd64": "x64"
+    },
+    "template": "oblivion-desktop-%PLATFORM%-%ARCH%.tar.xz",
+    "install": [
+        "tar -xJf %FILE% -C %INSTALL_PATH%"
+    ],
+    "bins": [
+        "oblivion-desktop"
+    ]
+}
+

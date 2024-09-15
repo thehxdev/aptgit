@@ -1,0 +1,20 @@
+{
+    "repository": "mr-karan/doggo",
+    "platform": {
+        "darwin": "Darwin",
+        "linux": "Linux",
+        "freebsd": "Freebsd"
+    },
+    "arch": {
+        "amd64": "x86_64",
+        "386": "i386"
+    },
+    "tagRegexp": "(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)",
+    "template": "gitleaks_%VERSION%_%PLATFORM%_%ARCH%.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH%"
+    ],
+    "bins": [
+        "gitleaks"
+    ]
+}

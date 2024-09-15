@@ -1,0 +1,20 @@
+{
+    "repository": "shadowsocks/shadowsocks-rust",
+    "arch": {
+        "amd64": "x86_64",
+        "386": "i686",
+        "arm64": "aarch64",
+        "arm": "armv7"
+    },
+    "template": "shadowsocks-%TAGNAME%.%ARCH%-unknown-%PLATFORM%-musl.tar.xz",
+    "install": [
+        "tar -xJf %FILE% -C %INSTALL_PATH%"
+    ],
+    "bins": [
+        "sslocal",
+        "ssmanager",
+        "ssserver",
+        "ssservice",
+        "ssurl"
+    ]
+}

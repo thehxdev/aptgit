@@ -1,0 +1,15 @@
+{
+    "repository": "gitleaks/gitleaks",
+    "arch": {
+        "amd64": "x64",
+        "386": "x86",
+        "arm": "armv7"
+    },
+    "template": "gitleaks_%VERSION%_%PLATFORM%_%ARCH%.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH%"
+    ],
+    "bins": [
+        "gitleaks"
+    ]
+}

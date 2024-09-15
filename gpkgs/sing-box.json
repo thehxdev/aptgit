@@ -1,0 +1,11 @@
+{
+    "repository": "sagernet/sing-box",
+    "template": "sing-box-%VERSION%-%PLATFORM%-%ARCH%.tar.gz",
+    "tagRegexp": "(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH% --strip-components=1"
+    ],
+    "bins": [
+        "sing-box"
+    ]
+}
