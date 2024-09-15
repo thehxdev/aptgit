@@ -7,12 +7,17 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
+	"path"
 	"path/filepath"
 	"regexp"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 
+	"github.com/thehxdev/aptgit/config"
+	"github.com/thehxdev/aptgit/gpath"
 	"github.com/thehxdev/aptgit/gvars"
 	"github.com/thehxdev/aptgit/log"
 )
@@ -126,22 +131,17 @@ func (gp *Gpkg) GetAllTags() ([]string, error) {
 	return allTags, nil
 }
 
-func (gp *Gpkg) DownloadLatest(outDir string) error {
-	latestTag, err := gp.GetLatestTag()
-	if err != nil {
-		return err
-	}
-
+func (gp *Gpkg) DownloadRelease(tag string) (string, error) {
 	fileName := gvars.ResolveAll(gp.Template, map[string]string{
-		"TAGNAME":  latestTag,
-		"VERSION":  gp.ParseTagRegexp(latestTag),
+		"TAGNAME":  tag,
+		"VERSION":  gp.ParseTagRegexp(tag),
 		"PLATFORM": gp.GetPlatform(runtime.GOOS),
 		"ARCH":     gp.GetArch(runtime.GOARCH),
 	})
 
-	dlurl, err := url.JoinPath("https://github.com/", gp.Repository, "releases/download", latestTag, fileName)
+	dlurl, err := url.JoinPath("https://github.com/", gp.Repository, "releases/download", tag, fileName)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	log.Inf.Println("Downloading", dlurl)
@@ -164,10 +164,10 @@ func (gp *Gpkg) DownloadLatest(outDir string) error {
 		log.Inf.Printf("File size: %.3f MiB", fileSize)
 	}
 
-	savePath := filepath.Join(outDir, fileName)
+	savePath := filepath.Join(config.G.DownloadPath, fileName)
 	fp, err := os.Create(savePath)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer fp.Close()
 
@@ -210,5 +210,53 @@ func (gp *Gpkg) DownloadLatest(outDir string) error {
 	}
 	log.Inf.Println("Success!")
 
+	return savePath, nil
+}
+
+func (gp *Gpkg) RunInstallSteps(vars map[string]string) error {
+	err := os.MkdirAll(vars["INSTALL_PATH"], 0775)
+	if err != nil {
+		return err
+	}
+
+	normalizedCmds := make([][]string, 0)
+	for _, step := range gp.InstallSteps {
+		cmd := make([]string, 0)
+		words := strings.Split(step, " ")
+		for _, word := range words {
+			resolved := gvars.ResolveAll(word, vars)
+			if strings.Contains(resolved, " ") {
+				resolved = gpath.Qoute(resolved)
+			}
+			cmd = append(cmd, resolved)
+		}
+		normalizedCmds = append(normalizedCmds, cmd)
+	}
+
+	for _, cmd := range normalizedCmds {
+		cmd := exec.Command(cmd[0], cmd[1:]...)
+		log.Inf.Printf("%+v\n", cmd)
+		err = cmd.Run()
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
+}
+
+func (gp *Gpkg) LinkBinaryFiles() error {
+	var err error = nil
+	installDir := path.Join(config.G.InstallPath, gp.Repository)
+	for _, bin := range gp.Bins {
+		srcFile := filepath.Join(installDir, bin)
+		destFile := filepath.Join(config.G.BinPath, bin)
+		log.Inf.Printf("%s -> %s", srcFile, destFile)
+		err = os.Symlink(srcFile, destFile)
+		if err != nil {
+			goto ret
+		}
+	}
+ret:
+	return err
 }

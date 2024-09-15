@@ -1,6 +1,7 @@
 package gpath
 
 import (
+	"fmt"
 	"os"
 	"path"
 )
@@ -14,4 +15,8 @@ func Expand(p string) string {
 		return path.Join(home, p[1:])
 	}
 	return p
+}
+
+func Qoute(p string) string {
+	return fmt.Sprintf("'%s'", p)
 }
