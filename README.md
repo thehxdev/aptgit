@@ -21,12 +21,12 @@ aptgit -c ./src/config.json -def ./gpkgs/sing-box.json
 ```
 
 ## Todo!
-- [ ] Implement `init`, `install`, `uninstall`, `upgrade`, `list-versions`, `latest-version`, `list-installed` sub-commands
+- [ ] Implement `init`, `install`, `uninstall`, `upgrade`, `list-versions`, `latest-version`, `list-installed` and `switch` sub-commands
 - [ ] Install and set custom version of a program
 - [ ] Override aptgit and package parameters from command line
 - [ ] Ensure all required directories exist before any processing
 - [ ] Structured logging
 - [ ] Better error handling
 - [ ] Process multiple packages concurrently
-- [ ] `gitapt.lock` file to keep metadata about installed packages (if needed - probably required for upgrading packages)
+- [ ] `aptgit.lock` file to keep metadata about installed packages (if needed - probably required for upgrading packages)
 - [ ] Better naming, coding style and cleaner architecture
