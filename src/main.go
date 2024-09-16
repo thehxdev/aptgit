@@ -24,7 +24,10 @@ func init() {
 }
 
 func main() {
-	installPackage(pkgDef)
+	err := installPackage(pkgDef)
+	if err != nil {
+		log.Err.Fatal(err)
+	}
 }
 
 func installPackage(defPath string) error {
