@@ -308,9 +308,11 @@ func (gp *Gpkg) Install() error {
 func (gp *Gpkg) RemovedExistingSymlinks(bins []string) {
 	for _, bin := range bins {
 		_, filename := filepath.Split(bin)
-		err := os.Remove(filepath.Join(config.G.BinPath, filename))
-		if err != nil {
-			log.Err.Println(err)
+		path := filepath.Join(config.G.BinPath, filename)
+		if _, err := os.Stat(path); err == nil {
+			if err := os.Remove(path); err != nil {
+				log.Err.Println(err)
+			}
 		}
 	}
 }
