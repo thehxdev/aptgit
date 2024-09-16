@@ -277,3 +277,53 @@ func (gp *Gpkg) SymlinkBinaryFiles(vars map[string]string) error {
 ret:
 	return err
 }
+
+func (gp *Gpkg) Install() error {
+	var err error
+
+	gp.Vars["FILE"], err = gp.DownloadRelease(gp.Vars)
+	if err != nil {
+		return err
+	}
+
+	pkgInstallPath := gp.Vars["INSTALL_PATH"]
+	if _, err := os.Stat(pkgInstallPath); err == nil {
+		os.Remove(pkgInstallPath)
+	}
+
+	err = os.MkdirAll(pkgInstallPath, 0775)
+	if err != nil {
+		return err
+	}
+
+	err = RunCommands(gp.Info.InstallSteps, gp.Vars)
+	if err != nil {
+		return err
+	}
+
+	gp.RemovedExistingSymlinks(gp.Info.Bins)
+	return gp.SymlinkBinaryFiles(gp.Vars)
+}
+
+func (gp *Gpkg) RemovedExistingSymlinks(bins []string) {
+	for _, bin := range bins {
+		_, filename := filepath.Split(bin)
+		err := os.Remove(filepath.Join(config.G.BinPath, filename))
+		if err != nil {
+			log.Err.Println(err)
+		}
+	}
+}
+
+func (gp *Gpkg) SetTagNameAsMain() error {
+	tagInstallPath := gp.Vars["INSTALL_PATH"]
+	if _, err := os.Stat(tagInstallPath); err != nil {
+		log.Err.Printf("tag name %s is not installed for package %s", gp.TagName, gp.Info.Repository)
+		return err
+	}
+
+	gp.RemovedExistingSymlinks(gp.Info.Bins)
+	gp.SymlinkBinaryFiles(gp.Vars)
+
+	return nil
+}
