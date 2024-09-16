@@ -5,7 +5,7 @@ import (
 	"path"
 	"runtime"
 
-	"github.com/thehxdev/aptgit/config"
+	"github.com/thehxdev/aptgit/genv"
 	"github.com/thehxdev/aptgit/gpkg"
 	"github.com/thehxdev/aptgit/log"
 )
@@ -18,9 +18,7 @@ var (
 func init() {
 	slapWindowsUsers()
 	parseFlags()
-	if err := config.ReadConfig(configPath); err != nil {
-		log.Err.Fatal(err)
-	}
+	genv.Init()
 }
 
 func main() {
@@ -45,7 +43,7 @@ func main() {
 		"VERSION":      pkg.ParseTagRegexp(pkg.TagName),
 		"PLATFORM":     pkg.GetPlatform(),
 		"ARCH":         pkg.GetArch(),
-		"INSTALL_PATH": path.Join(config.G.InstallPath, pkg.Info.Repository, pkg.TagName),
+		"INSTALL_PATH": path.Join(genv.G.InstallPath, pkg.Info.Repository, pkg.TagName),
 	}
 
 	// err = pkg.SetTagNameAsMain()

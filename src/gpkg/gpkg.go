@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/thehxdev/aptgit/config"
+	"github.com/thehxdev/aptgit/genv"
 	"github.com/thehxdev/aptgit/gpath"
 	"github.com/thehxdev/aptgit/gvars"
 	"github.com/thehxdev/aptgit/log"
@@ -185,7 +185,7 @@ func (gp *Gpkg) DownloadRelease(vars map[string]string) (string, error) {
 		log.Inf.Printf("File size: %.3f MiB", fileSize)
 	}
 
-	savePath := filepath.Join(config.G.DownloadPath, fileName)
+	savePath := filepath.Join(genv.G.DownloadPath, fileName)
 	fp, err := os.Create(savePath)
 	if err != nil {
 		return "", err
@@ -267,7 +267,7 @@ func (gp *Gpkg) SymlinkBinaryFiles(vars map[string]string) error {
 	for _, bin := range gp.Info.Bins {
 		srcPath := filepath.Join(installPath, bin)
 		_, binFile := filepath.Split(bin)
-		destPath := filepath.Join(config.G.BinPath, binFile)
+		destPath := filepath.Join(genv.G.BinPath, binFile)
 		log.Inf.Printf("%s -> %s", srcPath, destPath)
 		err = os.Symlink(srcPath, destPath)
 		if err != nil {
@@ -308,7 +308,7 @@ func (gp *Gpkg) Install() error {
 func (gp *Gpkg) RemovedExistingSymlinks(bins []string) {
 	for _, bin := range bins {
 		_, filename := filepath.Split(bin)
-		path := filepath.Join(config.G.BinPath, filename)
+		path := filepath.Join(genv.G.BinPath, filename)
 		if _, err := os.Stat(path); err == nil {
 			if err := os.Remove(path); err != nil {
 				log.Err.Println(err)
