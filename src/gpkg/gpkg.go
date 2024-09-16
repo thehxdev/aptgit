@@ -24,7 +24,7 @@ import (
 
 const GH_API_URL = "https://api.github.com/repos"
 
-type Gpkg struct {
+type PkgInfo struct {
 	Repository   string            `json:"repository"`
 	PlatformMap  map[string]string `json:"platform,omitempty"`
 	ArchMap      map[string]string `json:"arch,omitempty"`
@@ -34,13 +34,32 @@ type Gpkg struct {
 	Bins         []string          `json:"bins"`
 }
 
-func ReadDefinitionFile(p string) (*Gpkg, error) {
+type Gpkg struct {
+	Info    *PkgInfo
+	TagName string
+	Vars    map[string]string
+}
+
+func Init(pdef string) (*Gpkg, error) {
+	info, err := readDefinitionFile(pdef)
+	if err != nil {
+		return nil, err
+	}
+
+	gp := &Gpkg{
+		Info: info,
+	}
+
+	return gp, nil
+}
+
+func readDefinitionFile(p string) (*PkgInfo, error) {
 	defContent, err := os.ReadFile(p)
 	if err != nil {
 		return nil, err
 	}
 
-	pdef := &Gpkg{}
+	pdef := &PkgInfo{}
 
 	err = json.Unmarshal(defContent, pdef)
 	if err != nil {
@@ -52,7 +71,7 @@ func ReadDefinitionFile(p string) (*Gpkg, error) {
 
 func (gp *Gpkg) GetArch() string {
 	a := runtime.GOARCH
-	if garch, ok := gp.ArchMap[a]; ok {
+	if garch, ok := gp.Info.ArchMap[a]; ok {
 		return garch
 	}
 	return a
@@ -60,22 +79,23 @@ func (gp *Gpkg) GetArch() string {
 
 func (gp *Gpkg) GetPlatform() string {
 	p := runtime.GOOS
-	if gplat, ok := gp.PlatformMap[p]; ok {
+	if gplat, ok := gp.Info.PlatformMap[p]; ok {
 		return gplat
 	}
 	return p
 }
 
 func (gp *Gpkg) ParseTagRegexp(tag string) string {
-	if gp.TagRegexp != "" {
-		tagRegexp := regexp.MustCompile(gp.TagRegexp)
+	if gp.Info.TagRegexp != "" {
+		tagRegexp := regexp.MustCompile(gp.Info.TagRegexp)
 		return tagRegexp.FindString(tag)
 	}
 	return tag
 }
 
 func (gp *Gpkg) GetLatestStableTag() (string, error) {
-	req_url, err := url.JoinPath(GH_API_URL, gp.Repository, "releases/latest")
+	log.Inf.Println("getting latest tag info from Github api")
+	req_url, err := url.JoinPath(GH_API_URL, gp.Info.Repository, "releases/latest")
 	if err != nil {
 		return "", err
 	}
@@ -103,7 +123,9 @@ func (gp *Gpkg) GetLatestStableTag() (string, error) {
 }
 
 func (gp *Gpkg) GetAllTags() ([]string, error) {
-	req_url, err := url.JoinPath(GH_API_URL, gp.Repository, "releases")
+	log.Inf.Println("getting all tags info from Github api")
+
+	req_url, err := url.JoinPath(GH_API_URL, gp.Info.Repository, "releases")
 	if err != nil {
 		return nil, err
 	}
@@ -136,9 +158,9 @@ func (gp *Gpkg) GetAllTags() ([]string, error) {
 
 func (gp *Gpkg) DownloadRelease(vars map[string]string) (string, error) {
 	tag := vars["TAGNAME"]
-	fileName := gvars.ResolveAll(gp.Template, vars)
+	fileName := gvars.ResolveAll(gp.Info.Template, vars)
 
-	dlurl, err := url.JoinPath("https://github.com/", gp.Repository, "releases/download", tag, fileName)
+	dlurl, err := url.JoinPath("https://github.com/", gp.Info.Repository, "releases/download", tag, fileName)
 	if err != nil {
 		return "", err
 	}
@@ -208,35 +230,29 @@ func (gp *Gpkg) DownloadRelease(vars map[string]string) (string, error) {
 	for i := 0; i < 2; i++ {
 		<-jobChan
 	}
-	log.Inf.Println("Success!")
 
 	return savePath, nil
 }
 
-func (gp *Gpkg) RunCommands(steps []string, vars map[string]string) error {
-	err := os.MkdirAll(vars["INSTALL_PATH"], 0775)
-	if err != nil {
-		return err
-	}
-
+func RunCommands(commands []string, vars map[string]string) error {
 	normalizedCmds := make([][]string, 0)
-	for _, step := range steps {
-		cmd := make([]string, 0)
-		cmdWords := strings.Split(step, " ")
+	for _, cmd := range commands {
+		newCmd := make([]string, 0)
+		cmdWords := strings.Split(cmd, " ")
 		for _, word := range cmdWords {
 			resolved := gvars.ResolveAll(word, vars)
 			if strings.Contains(resolved, " ") {
 				resolved = gpath.Qoute(resolved)
 			}
-			cmd = append(cmd, resolved)
+			newCmd = append(newCmd, resolved)
 		}
-		normalizedCmds = append(normalizedCmds, cmd)
+		normalizedCmds = append(normalizedCmds, newCmd)
 	}
 
 	for _, cmd := range normalizedCmds {
 		cmd := exec.Command(cmd[0], cmd[1:]...)
 		log.Inf.Printf("%+v\n", cmd)
-		err = cmd.Run()
+		err := cmd.Run()
 		if err != nil {
 			return err
 		}
@@ -248,7 +264,7 @@ func (gp *Gpkg) RunCommands(steps []string, vars map[string]string) error {
 func (gp *Gpkg) SymlinkBinaryFiles(vars map[string]string) error {
 	var err error = nil
 	installPath := vars["INSTALL_PATH"]
-	for _, bin := range gp.Bins {
+	for _, bin := range gp.Info.Bins {
 		srcPath := filepath.Join(installPath, bin)
 		_, binFile := filepath.Split(bin)
 		destPath := filepath.Join(config.G.BinPath, binFile)
