@@ -94,7 +94,6 @@ func (gp *Gpkg) ParseTagRegexp(tag string) string {
 }
 
 func (gp *Gpkg) GetLatestStableTag() (string, error) {
-	log.Inf.Println("getting latest tag info from Github api")
 	req_url, err := url.JoinPath(GH_API_URL, gp.Info.Repository, "releases/latest")
 	if err != nil {
 		return "", err
@@ -123,8 +122,6 @@ func (gp *Gpkg) GetLatestStableTag() (string, error) {
 }
 
 func (gp *Gpkg) GetAllTags() ([]string, error) {
-	log.Inf.Println("getting all tags info from Github api")
-
 	req_url, err := url.JoinPath(GH_API_URL, gp.Info.Repository, "releases")
 	if err != nil {
 		return nil, err
