@@ -1,0 +1,11 @@
+{
+    "repository": "xjasonlyu/tun2socks",
+    "template": "tun2socks-%PLATFORM%-%ARCH%.zip",
+    "install": [
+        "unzip %FILE% -d %INSTALL_PATH%",
+        "mv %INSTALL_PATH%/tun2socks-%PLATFORM%-%ARCH% %INSTALL_PATH%/tun2socks"
+    ],
+    "bins": [
+        "tun2socks"
+    ]
+}
