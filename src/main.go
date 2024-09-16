@@ -56,7 +56,7 @@ func installPackage(defPath string) error {
 	pkgVars["FILE"] = savedFilePath
 	pkgVars["INSTALL_PATH"] = path.Join(config.G.InstallPath, pdef.Repository, latestTag)
 
-	err = pdef.RunInstallSteps(pkgVars)
+	err = pdef.RunCommands(pdef.InstallSteps, pkgVars)
 	if err != nil {
 		return err
 	}

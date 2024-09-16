@@ -210,14 +210,14 @@ func (gp *Gpkg) DownloadRelease(vars map[string]string) (string, error) {
 	return savePath, nil
 }
 
-func (gp *Gpkg) RunInstallSteps(vars map[string]string) error {
+func (gp *Gpkg) RunCommands(steps []string, vars map[string]string) error {
 	err := os.MkdirAll(vars["INSTALL_PATH"], 0775)
 	if err != nil {
 		return err
 	}
 
 	normalizedCmds := make([][]string, 0)
-	for _, step := range gp.InstallSteps {
+	for _, step := range steps {
 		cmd := make([]string, 0)
 		cmdWords := strings.Split(step, " ")
 		for _, word := range cmdWords {
