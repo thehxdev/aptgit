@@ -1,5 +1,5 @@
 {
-    "repository": "sharkdp/hyperfine",
+    "repository": "sharkdp/bat",
     "arch": {
         "amd64": "x86_64",
         "386": "i686",
