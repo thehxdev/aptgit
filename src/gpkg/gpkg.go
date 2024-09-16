@@ -11,7 +11,6 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -132,13 +131,9 @@ func (gp *Gpkg) GetAllTags() ([]string, error) {
 	return allTags, nil
 }
 
-func (gp *Gpkg) DownloadRelease(tag string) (string, error) {
-	fileName := gvars.ResolveAll(gp.Template, map[string]string{
-		"TAGNAME":  tag,
-		"VERSION":  gp.ParseTagRegexp(tag),
-		"PLATFORM": gp.GetPlatform(runtime.GOOS),
-		"ARCH":     gp.GetArch(runtime.GOARCH),
-	})
+func (gp *Gpkg) DownloadRelease(vars map[string]string) (string, error) {
+	tag := vars["TAGNAME"]
+	fileName := gvars.ResolveAll(gp.Template, vars)
 
 	dlurl, err := url.JoinPath("https://github.com/", gp.Repository, "releases/download", tag, fileName)
 	if err != nil {

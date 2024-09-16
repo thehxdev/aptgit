@@ -41,15 +41,22 @@ func installPackage(defPath string) error {
 		return err
 	}
 
-	savedFilePath, err := pdef.DownloadRelease(latestTag)
+	pkgVars := map[string]string{
+		"TAGNAME":  latestTag,
+		"VERSION":  pdef.ParseTagRegexp(latestTag),
+		"PLATFORM": pdef.GetPlatform(runtime.GOOS),
+		"ARCH":     pdef.GetArch(runtime.GOARCH),
+	}
+
+	savedFilePath, err := pdef.DownloadRelease(pkgVars)
 	if err != nil {
 		return err
 	}
 
-	err = pdef.RunInstallSteps(map[string]string{
-		"FILE":         savedFilePath,
-		"INSTALL_PATH": path.Join(config.G.InstallPath, pdef.Repository),
-	})
+	pkgVars["FILE"] = savedFilePath
+	pkgVars["INSTALL_PATH"] = path.Join(config.G.InstallPath, pdef.Repository)
+
+	err = pdef.RunInstallSteps(pkgVars)
 	if err != nil {
 		return err
 	}
