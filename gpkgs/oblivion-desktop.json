@@ -8,7 +8,7 @@
     },
     "template": "oblivion-desktop-%PLATFORM%-%ARCH%.tar.xz",
     "install": [
-        "tar -xJf %FILE% -C %INSTALL_PATH%"
+        "tar -xJf %FILE% -C %INSTALL_PATH% --strip-components=1"
     ],
     "bins": [
         "oblivion-desktop"
