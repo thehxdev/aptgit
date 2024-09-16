@@ -33,7 +33,7 @@ func installPackage(defPath string) error {
 		return err
 	}
 
-	latestTag, err := pdef.GetLatestTag()
+	latestTag, err := pdef.GetLatestStableTag()
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func installPackage(defPath string) error {
 
 func parseFlags() {
 	flag.StringVar(&configPath, "c", "", "Path to aptgit config file")
-	flag.StringVar(&pkgDef, "def", "", "Package definition path")
+	flag.StringVar(&pkgDef, "p", "", "Path to package definition file")
 	flag.Parse()
 }
 

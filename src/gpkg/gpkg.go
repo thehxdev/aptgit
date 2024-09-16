@@ -64,15 +64,15 @@ func (gp *Gpkg) GetPlatform(p string) string {
 	return p
 }
 
-func (gp *Gpkg) ParseTagRegexp(v string) string {
+func (gp *Gpkg) ParseTagRegexp(tag string) string {
 	if gp.TagRegexp != "" {
-		verRegexp := regexp.MustCompile(gp.TagRegexp)
-		return verRegexp.FindString(v)
+		tagRegexp := regexp.MustCompile(gp.TagRegexp)
+		return tagRegexp.FindString(tag)
 	}
-	return v
+	return tag
 }
 
-func (gp *Gpkg) GetLatestTag() (string, error) {
+func (gp *Gpkg) GetLatestStableTag() (string, error) {
 	req_url, err := url.JoinPath(GH_API_URL, gp.Repository, "releases/latest")
 	if err != nil {
 		return "", err
@@ -125,6 +125,7 @@ func (gp *Gpkg) GetAllTags() ([]string, error) {
 
 	allTags := make([]string, 0)
 	for _, t := range jtags {
+		// TODO: Check each type assertion to avoid panic
 		allTags = append(allTags, t.(map[string]interface{})["tag_name"].(string))
 	}
 
