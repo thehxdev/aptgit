@@ -5,7 +5,7 @@ BIN := aptgit
 all: $(BIN)
 
 $(BIN):
-	$(GO) build $(GOFLAGS) -o ../$(BIN)
+	CGO_ENABLED=0 $(GO) build $(GOFLAGS) -o ../$(BIN)
 
 run:
 	@$(GO) run .
