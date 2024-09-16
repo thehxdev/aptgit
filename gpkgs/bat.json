@@ -1,0 +1,15 @@
+{
+    "repository": "sharkdp/hyperfine",
+    "arch": {
+        "amd64": "x86_64",
+        "386": "i686",
+        "arm64": "aarch64"
+    },
+    "template": "bat-%TAGNAME%-%ARCH%-unknown-%PLATFORM%-musl.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH% --strip-components=1"
+    ],
+    "bins": [
+        "bat"
+    ]
+}
