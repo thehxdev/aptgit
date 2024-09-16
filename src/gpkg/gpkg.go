@@ -1,6 +1,7 @@
 package gpkg
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -166,13 +167,14 @@ func (gp *Gpkg) DownloadRelease(vars map[string]string) (string, error) {
 		return "", err
 	}
 	defer fp.Close()
+	writer := bufio.NewWriter(fp)
 
 	jobChan := make(chan struct{}, 2)
 	done := make(chan struct{}, 1)
 	log.Inf.Println("Saving to", savePath)
 
 	go func() {
-		_, err = io.Copy(fp, resp.Body)
+		_, err = io.Copy(writer, resp.Body)
 		if err != nil {
 			log.Err.Fatal(err)
 		}
