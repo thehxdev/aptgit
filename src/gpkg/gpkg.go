@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -243,15 +242,15 @@ func (gp *Gpkg) RunInstallSteps(vars map[string]string) error {
 	return nil
 }
 
-func (gp *Gpkg) SymlinkBinaryFiles() error {
+func (gp *Gpkg) SymlinkBinaryFiles(vars map[string]string) error {
 	var err error = nil
-	installDir := path.Join(config.G.InstallPath, gp.Repository)
+	installPath := vars["INSTALL_PATH"]
 	for _, bin := range gp.Bins {
-		srcFile := filepath.Join(installDir, bin)
+		srcPath := filepath.Join(installPath, bin)
 		_, binFile := filepath.Split(bin)
-		destFile := filepath.Join(config.G.BinPath, binFile)
-		log.Inf.Printf("%s -> %s", srcFile, destFile)
-		err = os.Symlink(srcFile, destFile)
+		destPath := filepath.Join(config.G.BinPath, binFile)
+		log.Inf.Printf("%s -> %s", srcPath, destPath)
+		err = os.Symlink(srcPath, destPath)
 		if err != nil {
 			goto ret
 		}

@@ -54,14 +54,14 @@ func installPackage(defPath string) error {
 	}
 
 	pkgVars["FILE"] = savedFilePath
-	pkgVars["INSTALL_PATH"] = path.Join(config.G.InstallPath, pdef.Repository)
+	pkgVars["INSTALL_PATH"] = path.Join(config.G.InstallPath, pdef.Repository, latestTag)
 
 	err = pdef.RunInstallSteps(pkgVars)
 	if err != nil {
 		return err
 	}
 
-	return pdef.SymlinkBinaryFiles()
+	return pdef.SymlinkBinaryFiles(pkgVars)
 }
 
 func parseFlags() {
