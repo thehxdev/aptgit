@@ -22,7 +22,7 @@ aptgit -c ./src/config.json -def ./gpkgs/sing-box.json
 
 ## Todo!
 - [ ] Implement `init`, `install`, `uninstall`, `upgrade`, `list-versions`, `latest-version`, `list-installed`, `switch`, `cleanup` sub-commands
-- [ ] Install and set custom version of a program
+- [X] Install and set custom version of a program
 - [ ] Override aptgit and package parameters from command line
 - [ ] Ensure all required directories exist before any processing
 - [ ] Structured logging
