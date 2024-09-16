@@ -44,8 +44,8 @@ func installPackage(defPath string) error {
 	pkgVars := map[string]string{
 		"TAGNAME":  latestTag,
 		"VERSION":  pdef.ParseTagRegexp(latestTag),
-		"PLATFORM": pdef.GetPlatform(runtime.GOOS),
-		"ARCH":     pdef.GetArch(runtime.GOARCH),
+		"PLATFORM": pdef.GetPlatform(),
+		"ARCH":     pdef.GetArch(),
 	}
 
 	savedFilePath, err := pdef.DownloadRelease(pkgVars)

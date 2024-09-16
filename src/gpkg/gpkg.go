@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -49,14 +50,16 @@ func ReadDefinitionFile(p string) (*Gpkg, error) {
 	return pdef, nil
 }
 
-func (gp *Gpkg) GetArch(a string) string {
+func (gp *Gpkg) GetArch() string {
+	a := runtime.GOARCH
 	if garch, ok := gp.ArchMap[a]; ok {
 		return garch
 	}
 	return a
 }
 
-func (gp *Gpkg) GetPlatform(p string) string {
+func (gp *Gpkg) GetPlatform() string {
+	p := runtime.GOOS
 	if gplat, ok := gp.PlatformMap[p]; ok {
 		return gplat
 	}
