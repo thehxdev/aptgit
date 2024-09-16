@@ -1,0 +1,15 @@
+{
+    "repository": "Orange-OpenSource/hurl",
+    "arch": {
+        "amd64": "x86_64",
+        "arm64": "aarch64"
+    },
+    "template": "hurl-%TAGNAME%-%ARCH%-unknown-%PLATFORM%-gnu.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH% --strip-components=1"
+    ],
+    "bins": [
+        "bin/hurl",
+        "bin/hurlfmt"
+    ]
+}
