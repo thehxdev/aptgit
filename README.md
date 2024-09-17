@@ -28,5 +28,6 @@ aptgit -c ./src/config.json -def ./gpkgs/sing-box.json
 - [ ] Structured logging
 - [ ] Better error handling
 - [ ] Process multiple packages concurrently
-- [ ] `aptgit.lock` file to keep metadata about installed packages (if needed - probably required for upgrading packages)
+- [X] `aptgit.lock` file to keep metadata about installed packages (if needed - probably required for upgrading packages)
 - [ ] Better naming, coding style and cleaner architecture
+- [ ] Cleanup the source code and seperate modules cause it's a mess
