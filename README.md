@@ -2,7 +2,7 @@
 aptgit is a package manager for Github releases.
 
 > [!WARNING]
-> This project is not even in alpha stage and this is only a prototype.
+> This project is not even in alpha stage and this is only a working prototype.
 
 ## Build
 First install GNU make and Go compiler. Then build aptgit:
@@ -11,13 +11,23 @@ make
 ```
 
 ## Usage
+
+> [!NOTE]
+> Since this project is a prototype, use it only for testing or in a testing environment.
+
+> [!WARNING]
+> The packages defined in [gpkgs](gpkgs) directory are only tested on Linux Mint 22 environment (other Linux systems must be OK) but macOS is not tested.
+
 Provide a config file and a package's definition to `aptgit` executable to download the specified file:
 ```bash
 # First make required directories
-mkdir -p ~/.aptgit/{gpkgs,downloads,installs,bin}
+mkdir -p ~/.aptgit/{downloads,installs,bin}
 
-# Downloaded files will be saved to `~/.aptgit/downloads` directory
-aptgit -c ./src/config.json -def ./gpkgs/sing-box.json
+# Copy packages to 
+cp -r ./gpkgs ~/.aptgit
+
+# get help message
+aptgit -h
 ```
 
 ## Todo!
