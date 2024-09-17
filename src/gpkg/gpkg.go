@@ -38,6 +38,7 @@ type Gpkg struct {
 	Info    *PkgInfo
 	TagName string
 	Vars    map[string]string
+	MainTag string
 }
 
 func Init(pdef string) (*Gpkg, error) {
@@ -51,6 +52,33 @@ func Init(pdef string) (*Gpkg, error) {
 	}
 
 	return gp, nil
+}
+
+func ReadMdFile() (map[string]string, error) {
+	fp, err := os.Open(genv.G.LockFile)
+	if err != nil {
+		return nil, err
+	}
+	defer fp.Close()
+	reader := bufio.NewReader(fp)
+
+	allMds := make(map[string]string)
+	err = json.NewDecoder(reader).Decode(&allMds)
+	if err != nil {
+		return nil, err
+	}
+
+	return allMds, nil
+}
+
+func WriteMdFile(mds map[string]string) error {
+	fp, err := os.Create(genv.G.LockFile)
+	if err != nil {
+		return err
+	}
+	defer fp.Close()
+
+	return json.NewEncoder(fp).Encode(mds)
 }
 
 func readDefinitionFile(p string) (*PkgInfo, error) {
@@ -209,7 +237,7 @@ func (gp *Gpkg) DownloadRelease(vars map[string]string) (string, error) {
 			time.Sleep(time.Second * 1)
 			stat, err := fp.Stat()
 			if err != nil {
-				log.Err.Println(err)
+				log.Wrn.Println(err)
 				continue
 			}
 			downloaded := float64(stat.Size()) / 1024 / 1024
@@ -299,17 +327,21 @@ func (gp *Gpkg) Install() error {
 	}
 
 	gp.RemovedExistingSymlinks(gp.Info.Bins)
-	return gp.SymlinkBinaryFiles(gp.Vars)
+	err = gp.SymlinkBinaryFiles(gp.Vars)
+	if err != nil {
+		log.Err.Fatal(err)
+	}
+
+	gp.MainTag = gp.TagName
+	return nil
 }
 
 func (gp *Gpkg) RemovedExistingSymlinks(bins []string) {
 	for _, bin := range bins {
 		_, filename := filepath.Split(bin)
 		path := filepath.Join(genv.G.BinPath, filename)
-		if _, err := os.Stat(path); err == nil {
-			if err := os.Remove(path); err != nil {
-				log.Err.Println(err)
-			}
+		if err := os.Remove(path); err != nil {
+			log.Wrn.Println(err)
 		}
 	}
 }
@@ -324,5 +356,9 @@ func (gp *Gpkg) SetTagNameAsMain() error {
 	gp.RemovedExistingSymlinks(gp.Info.Bins)
 	gp.SymlinkBinaryFiles(gp.Vars)
 
+	gp.MainTag = gp.TagName
 	return nil
 }
+
+// TODO: Implemente UpdateLockFile
+func (gp *Gpkg) UpdateLockFile() {}

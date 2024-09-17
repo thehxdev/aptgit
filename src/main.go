@@ -34,11 +34,27 @@ func main() {
 		os.Exit(1)
 	}
 
+	allMds, err := gpkg.ReadMdFile()
+	if err != nil {
+		log.Err.Fatal(err)
+	}
+
 	pkg, err := gpkg.Init(filepath.Join(genv.G.Gpkgs, fmt.Sprintf("%s.json", fPackage)))
 	if err != nil {
 		log.Err.Fatal(err)
 	}
+
 	pkg.TagName = fTagName
+	if pkg.TagName == "" || pkg.TagName == "latest" {
+		pkg.TagName, err = pkg.GetLatestStableTag()
+		if err != nil {
+			log.Err.Fatal(err)
+		}
+		if fGetLatestTag {
+			fmt.Println(pkg.TagName)
+			return
+		}
+	}
 
 	pkg.Vars = map[string]string{
 		"TAGNAME":      pkg.TagName,
@@ -49,23 +65,10 @@ func main() {
 	}
 
 	if fInstall {
-		if pkg.TagName == "" {
-			log.Inf.Println("-tag flag is empty. using latest stable version of the package...")
-			pkg.TagName, err = pkg.GetLatestStableTag()
-			if err != nil {
-				log.Err.Fatal(err)
-			}
-		}
 		err = pkg.Install()
 		if err != nil {
 			log.Err.Fatal(err)
 		}
-	} else if fGetLatestTag {
-		latest, err := pkg.GetLatestStableTag()
-		if err != nil {
-			log.Err.Fatal(err)
-		}
-		fmt.Println(latest)
 	} else if fGetAllTags {
 		tags, err := pkg.GetAllTags()
 		if err != nil {
@@ -86,18 +89,23 @@ func main() {
 		(flag.Usage)()
 		log.Err.Fatal("no valid operation")
 	}
+
+	allMds[pkg.Info.Repository] = pkg.MainTag
+	err = gpkg.WriteMdFile(allMds)
+	if err != nil {
+		log.Err.Fatal(err)
+	}
 }
 
 func parseFlags() {
 	flag.StringVar(&fPackage, "p", "", "Package name")
-	flag.StringVar(&fTagName, "tag", "", "Package tag name")
+	flag.StringVar(&fTagName, "tag", "latest", "Package tag name")
 	flag.BoolVar(&fInstall, "install", false, "Install a package")
 	flag.BoolVar(&fSetGlobalVersion, "set-global", false, "Set package global version")
 	flag.BoolVar(&fGetAllTags, "list-all", false, "List all available tags for a package")
 	flag.BoolVar(&fGetLatestTag, "latest", false, "Get latest tag of a package")
 	flag.Parse()
 }
-
 
 func slapWindowsUsers() {
 	if runtime.GOOS == "windows" {
