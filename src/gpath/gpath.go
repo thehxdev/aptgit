@@ -30,3 +30,10 @@ func Exist(p string) bool {
 	_, err := os.Stat(p)
 	return err == nil
 }
+
+func MkdirIfNotExist(p string) error {
+	if !Exist(p) {
+		return os.MkdirAll(p, 0775)
+	}
+	return nil
+}

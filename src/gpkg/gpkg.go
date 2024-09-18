@@ -188,6 +188,13 @@ func (gp *Gpkg) DownloadRelease(vars map[string]string) (string, error) {
 	tag := vars["TAGNAME"]
 	fileName := gvars.ResolveAll(gp.Info.Template, vars)
 
+	dlpath := genv.G.DownloadPath
+	err := gpath.MkdirIfNotExist(dlpath)
+	if err != nil {
+		log.Err.Printf("Failed to create %s path", dlpath)
+		return "", err
+	}
+
 	dlurl, err := url.JoinPath("https://github.com/", gp.Info.Repository, "releases/download", tag, fileName)
 	if err != nil {
 		return "", err
@@ -213,7 +220,7 @@ func (gp *Gpkg) DownloadRelease(vars map[string]string) (string, error) {
 		log.Inf.Printf("File size: %.3f MiB", fileSize)
 	}
 
-	savePath := filepath.Join(genv.G.DownloadPath, fileName)
+	savePath := filepath.Join(dlpath, fileName)
 	fp, err := os.Create(savePath)
 	if err != nil {
 		return "", err
@@ -290,12 +297,19 @@ func RunCommands(commands []string, vars map[string]string) error {
 }
 
 func (gp *Gpkg) SymlinkBinaryFiles(vars map[string]string) error {
-	var err error = nil
+	var err error
+
+	binsPath := genv.G.BinPath
+	err = gpath.MkdirIfNotExist(binsPath)
+	if err != nil {
+		return fmt.Errorf("failed to create %s path", binsPath)
+	}
+
 	installPath := vars["INSTALL_PATH"]
 	for _, bin := range gp.Info.Bins {
 		srcPath := filepath.Join(installPath, bin)
 		_, binFile := filepath.Split(bin)
-		destPath := filepath.Join(genv.G.BinPath, binFile)
+		destPath := filepath.Join(binsPath, binFile)
 		log.Inf.Printf("%s -> %s", srcPath, destPath)
 		err = os.Symlink(srcPath, destPath)
 		if err != nil {
@@ -308,6 +322,12 @@ ret:
 
 func (gp *Gpkg) Install() error {
 	var err error
+
+	gInstallPath := genv.G.InstallPath
+	err = gpath.MkdirIfNotExist(gInstallPath)
+	if err != nil {
+		return fmt.Errorf("failed to create %s path", gInstallPath)
+	}
 
 	gp.Vars["FILE"], err = gp.DownloadRelease(gp.Vars)
 	if err != nil {

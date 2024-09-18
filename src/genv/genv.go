@@ -11,34 +11,31 @@ import (
 
 type Env struct {
 	Home string
-
-	// These other paths MUST be relative to `Home` field
-	BinPath      string
-	InstallPath  string
+	InstallPath string
 	DownloadPath string
-	Gpkgs        string
-	LockFile     string
+	BinPath string
+	Gpkgs string
+	LockFile string
 }
 
 var G *Env = &Env{}
 
 func Init() {
-	G.Home = os.Getenv("APTGIT_HOME")
-	if G.Home == "" {
-		G.Home = gpath.Expand("~/.aptgit")
+	home := os.Getenv("APTGIT_HOME")
+	if home == "" {
+		home = gpath.Expand("~/.aptgit")
 	}
-	if !path.IsAbs(G.Home) {
+	if !path.IsAbs(home) {
 		log.Err.Fatal("APTGIT_HOME environment varibale must be an absolute path")
 	}
-	if !gpath.Exist(G.Home) {
-		log.Err.Fatalf("APTGIT_HOME (%s) does not exist", G.Home)
+	if !gpath.Exist(home) {
+		log.Err.Fatalf("APTGIT_HOME (%s) does not exist", home)
 	}
-	G.InstallPath = path.Join(G.Home, "installed")
-	G.DownloadPath = path.Join(G.Home, "downloads")
-	G.BinPath = path.Join(G.Home, "bin")
-	G.Gpkgs = path.Join(G.Home, "gpkgs")
-	G.LockFile = filepath.Join(G.Home, "aptgit.lock")
-}
 
-func (e *Env) EnsureDirectoriesExistance() {
+	G.Home = home
+	G.InstallPath = path.Join(home, "installed")
+	G.DownloadPath = path.Join(home, "downloads")
+	G.BinPath = path.Join(home, "bin")
+	G.Gpkgs = path.Join(home, "gpkgs")
+	G.LockFile = filepath.Join(home, "aptgit.lock")
 }
