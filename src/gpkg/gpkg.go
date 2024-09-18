@@ -165,17 +165,20 @@ func (gp *Gpkg) GetAllTags() ([]string, error) {
 		return nil, fmt.Errorf("got %d status code", resp.StatusCode)
 	}
 
-	jtags := make([]interface{}, 0)
+	jdata := make([]interface{}, 0)
 
-	err = json.NewDecoder(resp.Body).Decode(&jtags)
+	err = json.NewDecoder(resp.Body).Decode(&jdata)
 	if err != nil {
 		return nil, err
 	}
 
 	allTags := make([]string, 0)
-	for _, t := range jtags {
-		// TODO: Check each type assertion to avoid panic
-		allTags = append(allTags, t.(map[string]interface{})["tag_name"].(string))
+	for _, t := range jdata {
+		if t, ok := t.(map[string]interface{}); ok {
+			if tname, ok := t["tag_name"].(string); ok {
+				allTags = append(allTags, tname)
+			}
+		}
 	}
 
 	return allTags, nil
@@ -312,7 +315,7 @@ func (gp *Gpkg) Install() error {
 	}
 
 	pkgInstallPath := gp.Vars["INSTALL_PATH"]
-	if _, err := os.Stat(pkgInstallPath); err == nil {
+	if gpath.Exist(pkgInstallPath) {
 		os.Remove(pkgInstallPath)
 	}
 
@@ -348,9 +351,8 @@ func (gp *Gpkg) RemovedExistingSymlinks(bins []string) {
 
 func (gp *Gpkg) SetTagNameAsMain() error {
 	tagInstallPath := gp.Vars["INSTALL_PATH"]
-	if _, err := os.Stat(tagInstallPath); err != nil {
-		log.Err.Printf("tag name %s is not installed for package %s", gp.TagName, gp.Info.Repository)
-		return err
+	if !gpath.Exist(tagInstallPath) {
+		return fmt.Errorf("tag name %s is not installed for package %s", gp.TagName, gp.Info.Repository)
 	}
 
 	gp.RemovedExistingSymlinks(gp.Info.Bins)
@@ -359,6 +361,3 @@ func (gp *Gpkg) SetTagNameAsMain() error {
 	gp.MainTag = gp.TagName
 	return nil
 }
-
-// TODO: Implemente UpdateLockFile
-func (gp *Gpkg) UpdateLockFile() {}

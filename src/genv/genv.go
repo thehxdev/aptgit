@@ -30,7 +30,7 @@ func Init() {
 	if !path.IsAbs(G.Home) {
 		log.Err.Fatal("APTGIT_HOME environment varibale must be an absolute path")
 	}
-	if _, err := os.Stat(G.Home); err != nil {
+	if !gpath.Exist(G.Home) {
 		log.Err.Fatalf("APTGIT_HOME (%s) does not exist", G.Home)
 	}
 	G.InstallPath = path.Join(G.Home, "installed")
@@ -38,4 +38,7 @@ func Init() {
 	G.BinPath = path.Join(G.Home, "bin")
 	G.Gpkgs = path.Join(G.Home, "gpkgs")
 	G.LockFile = filepath.Join(G.Home, "aptgit.lock")
+}
+
+func (e *Env) EnsureDirectoriesExistance() {
 }
