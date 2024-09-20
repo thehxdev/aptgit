@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"path"
 	"path/filepath"
 	"runtime"
@@ -14,12 +13,10 @@ import (
 )
 
 var (
-	fPackage          string
-	fTagName          string
-	fInstall          bool
-	fSetGlobalVersion bool
-	fGetLatestTag     bool
-	fGetAllTags       bool
+	flagSets = make(map[string]*flag.FlagSet)
+	subcmd   *flag.FlagSet
+	fPackage string
+	fTagName string
 )
 
 func init() {
@@ -29,11 +26,6 @@ func init() {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		(flag.Usage)()
-		os.Exit(1)
-	}
-
 	allMds, err := gpkg.ReadMdFile()
 	if err != nil {
 		log.Err.Fatal(err)
@@ -50,7 +42,7 @@ func main() {
 		if err != nil {
 			log.Err.Fatal(err)
 		}
-		if fGetLatestTag {
+		if subcmd.Name() == "latest" {
 			fmt.Println(pkg.TagName)
 			return
 		}
@@ -64,12 +56,13 @@ func main() {
 		"INSTALL_PATH": path.Join(genv.G.InstallPath, pkg.Info.Repository, pkg.TagName),
 	}
 
-	if fInstall {
+	switch subcmd.Name() {
+	case "install":
 		err = pkg.Install()
 		if err != nil {
 			log.Err.Fatal(err)
 		}
-	} else if fGetAllTags {
+	case "list-all":
 		tags, err := pkg.GetAllTags()
 		if err != nil {
 			log.Err.Fatal(err)
@@ -77,7 +70,7 @@ func main() {
 		for _, t := range tags {
 			fmt.Println(t)
 		}
-	} else if fSetGlobalVersion {
+	case "global":
 		if pkg.TagName == "" {
 			log.Err.Fatal("-tag flag is empty")
 		}
@@ -85,10 +78,11 @@ func main() {
 		if err != nil {
 			log.Err.Fatal(err)
 		}
-	} else {
+	default:
 		(flag.Usage)()
 		log.Err.Fatal("no valid operation")
 	}
+
 
 	allMds[pkg.Info.Repository] = pkg.MainTag
 	err = gpkg.WriteMdFile(allMds)
@@ -97,14 +91,8 @@ func main() {
 	}
 }
 
-func parseFlags() {
-	flag.StringVar(&fPackage, "p", "", "Package name")
-	flag.StringVar(&fTagName, "tag", "latest", "Package tag name")
-	flag.BoolVar(&fInstall, "install", false, "Install a package")
-	flag.BoolVar(&fSetGlobalVersion, "set-global", false, "Set package global version")
-	flag.BoolVar(&fGetAllTags, "list-all", false, "List all available tags for a package")
-	flag.BoolVar(&fGetLatestTag, "latest", false, "Get latest tag of a package")
-	flag.Parse()
+func registerFlagSet(name string) {
+	flagSets[name] = flag.NewFlagSet(name, flag.ExitOnError)
 }
 
 func slapWindowsUsers() {
