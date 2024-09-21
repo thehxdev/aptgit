@@ -12,13 +12,6 @@ import (
 	"github.com/thehxdev/aptgit/log"
 )
 
-var (
-	flagSets = make(map[string]*flag.FlagSet)
-	subcmd   *flag.FlagSet
-	fPackage string
-	fTagName string
-)
-
 func init() {
 	slapWindowsUsers()
 	parseFlags()

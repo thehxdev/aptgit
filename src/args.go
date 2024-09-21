@@ -6,6 +6,13 @@ import (
 	"os"
 )
 
+var (
+	flagSets = make(map[string]*flag.FlagSet)
+	subcmd   *flag.FlagSet
+	fPackage string
+	fTagName string
+)
+
 func parseFlags() {
 	if len(os.Args) < 2 {
 		printUsage()
