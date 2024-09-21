@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"flag"
+	"fmt"
+	"os"
 )
 
 func parseFlags() {
@@ -33,9 +33,8 @@ func parseFlags() {
 	subcmd.Parse(os.Args[2:])
 }
 
-
 func printUsage() {
-	fmt.Fprint(os.Stderr,`aptgit Usage:
+	fmt.Fprint(os.Stderr, `aptgit Usage:
     install -p <package> [-tag <tag name>]
         install a package (-tag is optional to install custom version)
 
@@ -56,4 +55,3 @@ func whichSubcmd() *flag.FlagSet {
 	}
 	return nil
 }
-

@@ -28,7 +28,8 @@ func init() {
 func main() {
 	allMds, err := gpkg.ReadMdFile()
 	if err != nil {
-		log.Err.Fatal(err)
+		log.Wrn.Println(err)
+		log.Wrn.Println("failed to read packages metadata file. using default empy metadata...")
 	}
 
 	pkg, err := gpkg.Init(filepath.Join(genv.G.Gpkgs, fmt.Sprintf("%s.json", fPackage)))
@@ -79,10 +80,9 @@ func main() {
 			log.Err.Fatal(err)
 		}
 	default:
-		(flag.Usage)()
+		printUsage()
 		log.Err.Fatal("no valid operation")
 	}
-
 
 	allMds[pkg.Info.Repository] = pkg.MainTag
 	err = gpkg.WriteMdFile(allMds)

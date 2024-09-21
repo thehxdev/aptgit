@@ -65,7 +65,7 @@ func ReadMdFile() (map[string]string, error) {
 	allMds := make(map[string]string)
 	err = json.NewDecoder(reader).Decode(&allMds)
 	if err != nil {
-		return nil, err
+		return allMds, err
 	}
 
 	return allMds, nil
@@ -276,7 +276,7 @@ func RunCommands(commands []string, vars map[string]string) error {
 		cmdWords := strings.Split(cmd, " ")
 		for _, word := range cmdWords {
 			resolved := gvars.ResolveAll(word, vars)
-			if strings.Contains(resolved, " ") {
+			if strings.ContainsAny(resolved, " \\") {
 				resolved = gpath.Qoute(resolved)
 			}
 			newCmd = append(newCmd, resolved)
@@ -286,7 +286,7 @@ func RunCommands(commands []string, vars map[string]string) error {
 
 	for _, cmd := range normalizedCmds {
 		cmd := exec.Command(cmd[0], cmd[1:]...)
-		log.Inf.Printf("%+v\n", cmd)
+		log.Inf.Println(cmd.String())
 		err := cmd.Run()
 		if err != nil {
 			return err

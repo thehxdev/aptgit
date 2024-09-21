@@ -10,12 +10,12 @@ import (
 )
 
 type Env struct {
-	Home string
-	InstallPath string
+	Home         string
+	InstallPath  string
 	DownloadPath string
-	BinPath string
-	Gpkgs string
-	LockFile string
+	BinPath      string
+	Gpkgs        string
+	LockFile     string
 }
 
 var G *Env = &Env{}
