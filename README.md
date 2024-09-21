@@ -1,11 +1,11 @@
 # aptgit
-aptgit is a package manager for Github releases.
+aptgit is a package and version manager for Github releases.
 
 > [!WARNING]
-> This project is not even in alpha stage and this is only a working prototype.
+> This project is in alpha stage.
 
 ## Build
-First install GNU make and Go compiler. Then build aptgit:
+First install [GNU make](https://www.gnu.org/software/make/) and [Go compiler](https://go.dev). Then build aptgit:
 ```bash
 make
 ```
@@ -20,21 +20,21 @@ make
 
 Provide a config file and a package's definition to `aptgit` executable to download the specified file:
 ```bash
-# First make required directories
+# Make required directories
 mkdir -p ~/.aptgit/{downloads,installs,bin}
 
-# Copy packages to 
+# Copy package definitions to aptgit home
 cp -r ./gpkgs ~/.aptgit
 
-# get help message
-aptgit -h
+# Get help message
+aptgit help
 ```
 
 ## Todo!
 - [ ] Implement `init`, `install`, `uninstall`, `upgrade`, `list-versions`, `latest-version`, `list-installed`, `switch`, `cleanup` sub-commands
 - [X] Install and set custom version of a program
 - [ ] Override aptgit and package parameters from command line
-- [ ] Ensure all required directories exist before any processing
+- [x] Ensure all required directories exist before any processing
 - [ ] Structured logging
 - [ ] Better error handling
 - [ ] Process multiple packages concurrently
