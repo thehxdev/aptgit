@@ -12,6 +12,11 @@ func parseFlags() {
 		os.Exit(1)
 	}
 
+	if os.Args[1] == "help" {
+		printUsage()
+		os.Exit(0)
+	}
+
 	registerFlagSet("install")
 	registerFlagSet("global")
 	registerFlagSet("list-all")
