@@ -28,15 +28,16 @@ func parseFlags() {
 	}
 
 	registerFlagSet("install")
+	registerFlagSet("uninstall")
 	registerFlagSet("global")
 	registerFlagSet("list-all")
 	registerFlagSet("latest")
 
-	for _, n := range []string{"install", "global"} {
-		flagSets[n].StringVar(&fTagName, "tag", "latest", "Package tag name")
+	for _, n := range []string{"install", "global", "uninstall"} {
+		flagSets[n].StringVar(&fTagName, "tag", "", "Package tag name")
 	}
 
-	for _, n := range []string{"install", "global", "list-all", "latest"} {
+	for _, n := range []string{"install", "global", "list-all", "latest", "uninstall"} {
 		flagSets[n].StringVar(&fPackage, "p", "", "Package name")
 	}
 
@@ -50,8 +51,9 @@ func parseFlags() {
 
 func printUsage() {
 	fmt.Fprint(os.Stderr, `aptgit Usage:
-    install -p <package> [-tag <tag name>]
-        install a package (-tag is optional to install custom version)
+    install -p <package> -tag <tag name>
+        install a package
+		you can use '-tag latest' to install latest stable tag
 
     global -p <package> -tag <tag name>
         set global version of a pacakge
@@ -61,6 +63,10 @@ func printUsage() {
 
     list-all -p <pacakge>
         list all tag names available to install
+
+    uninstall -p <pacakge> -tag <tag name>
+        uninstall a package
+        you can use '-tag all' to uninstall all the versions installed
 
     help
         show this help message

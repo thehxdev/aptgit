@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -350,7 +351,7 @@ func (gp *Gpkg) Install() error {
 		return err
 	}
 
-	gp.RemovedExistingSymlinks(gp.Info.Bins)
+	gp.RemoveExistingSymlinks()
 	err = gp.SymlinkBinaryFiles(gp.Vars)
 	if err != nil {
 		log.Err.Fatal(err)
@@ -360,8 +361,8 @@ func (gp *Gpkg) Install() error {
 	return nil
 }
 
-func (gp *Gpkg) RemovedExistingSymlinks(bins []string) {
-	for _, bin := range bins {
+func (gp *Gpkg) RemoveExistingSymlinks() {
+	for _, bin := range gp.Info.Bins {
 		_, filename := filepath.Split(bin)
 		path := filepath.Join(genv.G.BinPath, filename)
 		if err := os.Remove(path); err != nil {
@@ -376,9 +377,35 @@ func (gp *Gpkg) SetTagNameAsMain() error {
 		return fmt.Errorf("tag name %s is not installed for package %s", gp.TagName, gp.Info.Repository)
 	}
 
-	gp.RemovedExistingSymlinks(gp.Info.Bins)
+	gp.RemoveExistingSymlinks()
 	gp.SymlinkBinaryFiles(gp.Vars)
 
 	gp.MainTag = gp.TagName
+	return nil
+}
+
+func (gp *Gpkg) Uninstall() error {
+	var err error
+	tag := gp.TagName
+
+	pkgInstallPath := path.Join(genv.G.InstallPath, gp.Info.Repository)
+	if !gpath.Exist(pkgInstallPath) {
+		return fmt.Errorf("package %s is not installed", gp.Info.Repository)
+	}
+
+	if tag == "all" {
+		if err = os.RemoveAll(path.Dir(pkgInstallPath)); err != nil {
+			return err
+		}
+		goto finalize
+	}
+
+	err = os.RemoveAll(path.Join(pkgInstallPath, tag))
+	if err != nil {
+		return err
+	}
+
+finalize:
+	gp.RemoveExistingSymlinks()
 	return nil
 }

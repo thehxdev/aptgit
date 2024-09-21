@@ -31,7 +31,11 @@ func main() {
 	}
 
 	pkg.TagName = fTagName
-	if pkg.TagName == "" || pkg.TagName == "latest" {
+	if pkg.TagName == "" {
+		log.Err.Fatal("-tag flag is empty")
+	}
+
+	if pkg.TagName == "latest" {
 		pkg.TagName, err = pkg.GetLatestStableTag()
 		if err != nil {
 			log.Err.Fatal(err)
@@ -52,8 +56,7 @@ func main() {
 
 	switch subcmd.Name() {
 	case "install":
-		err = pkg.Install()
-		if err != nil {
+		if err = pkg.Install(); err != nil {
 			log.Err.Fatal(err)
 		}
 	case "list-all":
@@ -65,12 +68,12 @@ func main() {
 			fmt.Println(t)
 		}
 	case "global":
-		if pkg.TagName == "" {
-			log.Err.Fatal("-tag flag is empty")
-		}
-		err = pkg.SetTagNameAsMain()
-		if err != nil {
+		if err = pkg.SetTagNameAsMain(); err != nil {
 			log.Err.Fatal(err)
+		}
+	case "uninstall":
+		if err = pkg.Uninstall(); err != nil {
+			log.Err.Println(err)
 		}
 	default:
 		printUsage()
