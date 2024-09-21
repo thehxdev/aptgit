@@ -2,7 +2,6 @@ package main
 
 import "fmt"
 
-
 const (
 	V_MAJOR = 0
 	V_MINOR = 0
