@@ -11,10 +11,6 @@ make
 ```
 
 ## Usage
-
-> [!NOTE]
-> Since this project is a prototype, use it only for testing or in a testing environment.
-
 > [!WARNING]
 > The packages defined in [gpkgs](gpkgs) directory are only tested on Linux Mint 22 environment (other Linux systems must be OK) but macOS is not tested.
 
@@ -28,6 +24,23 @@ cp -r ./gpkgs ~/.aptgit
 
 # Get help message
 aptgit help
+```
+
+## Install
+You can use GNU make to install aptgit. By default aptgit installs to `~/.local/bin` directory and default aptgit home is set to `~/.aptgit`.
+You can go with defaults or change them:
+```bash
+# install with defaults
+make install
+
+# install with modified paths
+make install INSTALL_DIR=/path/to/install/directory APTGIT_HOME=/path/to/aptgit/home
+```
+
+## Uninstall
+In case you installed aptgit with default parameters:
+```bash
+rm -rf $HOME/.local/bin/aptgit $HOME/.aptgit
 ```
 
 ## Todo!
