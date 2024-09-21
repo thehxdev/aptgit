@@ -15,6 +15,9 @@ func parseFlags() {
 	if os.Args[1] == "help" {
 		printUsage()
 		os.Exit(0)
+	} else if os.Args[1] == "version" {
+		fmt.Println("aptgit", VERSION_STRING)
+		os.Exit(0)
 	}
 
 	registerFlagSet("install")
@@ -51,6 +54,12 @@ func printUsage() {
 
     list-all -p <pacakge>
         list all tag names available to install
+
+	help
+		show this help message
+
+	version
+		show version information
 `)
 }
 
