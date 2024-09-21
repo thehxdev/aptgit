@@ -55,14 +55,15 @@ func Init(pdef string) (*Gpkg, error) {
 }
 
 func ReadMdFile() (map[string]string, error) {
+	allMds := make(map[string]string)
+
 	fp, err := os.Open(genv.G.LockFile)
 	if err != nil {
-		return nil, err
+		return allMds, err
 	}
 	defer fp.Close()
 	reader := bufio.NewReader(fp)
 
-	allMds := make(map[string]string)
 	err = json.NewDecoder(reader).Decode(&allMds)
 	if err != nil {
 		return allMds, err
