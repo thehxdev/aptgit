@@ -55,11 +55,11 @@ func printUsage() {
     list-all -p <pacakge>
         list all tag names available to install
 
-	help
-		show this help message
+    help
+        show this help message
 
-	version
-		show version information
+    version
+        show version information
 `)
 }
 
