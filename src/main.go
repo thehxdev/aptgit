@@ -24,6 +24,7 @@ func main() {
 		log.Wrn.Println(err)
 		log.Wrn.Println("failed to read packages metadata file. using default empy metadata...")
 	}
+	subcmdName := subcmd.Name()
 
 	pkg, err := gpkg.Init(filepath.Join(genv.G.Gpkgs, fmt.Sprintf("%s.json", fPackage)))
 	if err != nil {
@@ -31,18 +32,10 @@ func main() {
 	}
 
 	pkg.TagName = fTagName
-	if pkg.TagName == "" {
-		log.Err.Fatal("-tag flag is empty")
-	}
-
 	if pkg.TagName == "latest" {
 		pkg.TagName, err = pkg.GetLatestStableTag()
 		if err != nil {
 			log.Err.Fatal(err)
-		}
-		if subcmd.Name() == "latest" {
-			fmt.Println(pkg.TagName)
-			return
 		}
 	}
 
@@ -54,11 +47,20 @@ func main() {
 		"INSTALL_PATH": path.Join(genv.G.InstallPath, pkg.Info.Repository, pkg.TagName),
 	}
 
-	switch subcmd.Name() {
+	switch subcmdName {
 	case "install":
+		if pkg.TagName == "" {
+			log.Err.Fatal("-tag flag is empty")
+		}
 		if err = pkg.Install(); err != nil {
 			log.Err.Fatal(err)
 		}
+	case "latest":
+		latestTag, err := pkg.GetLatestStableTag()
+		if err != nil {
+			log.Err.Fatal(err)
+		}
+		fmt.Println(latestTag)
 	case "list-all":
 		tags, err := pkg.GetAllTags()
 		if err != nil {
@@ -68,10 +70,16 @@ func main() {
 			fmt.Println(t)
 		}
 	case "global":
+		if pkg.TagName == "" {
+			log.Err.Fatal("-tag flag is empty")
+		}
 		if err = pkg.SetTagNameAsMain(); err != nil {
 			log.Err.Fatal(err)
 		}
 	case "uninstall":
+		if pkg.TagName == "" {
+			log.Err.Fatal("-tag flag is empty")
+		}
 		if err = pkg.Uninstall(); err != nil {
 			log.Err.Println(err)
 		}
