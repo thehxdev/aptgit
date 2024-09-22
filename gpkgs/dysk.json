@@ -1,0 +1,22 @@
+{
+    "repository": "Canop/dysk",
+    "arch": {
+        "amd64": "x86_64",
+        "arm64": "aarch64",
+        "arm": "armv7"
+    },
+    "platform": {
+        "linux": "linux-musl"
+    },
+    "tagRegexp": "(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)",
+    "template": "dysk_%VERSION%.zip",
+    "install": [
+        "unzip -o %FILE% -d %INSTALL_PATH%",
+        "cp -rv %INSTALL_PATH%/build/%ARCH%-unknown-%PLATFORM%/dysk %INSTALL_PATH%",
+        "rm -rf %INSTALL_PATH%/build"
+    ],
+    "bins": [
+        "dysk"
+    ]
+}
+
