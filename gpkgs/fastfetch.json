@@ -1,0 +1,17 @@
+{
+    "repository": "fastfetch-cli/fastfetch",
+    "platform": {
+        "darwin": "macos"
+    },
+    "arch": {
+        "arm64": "aarch64"
+    },
+    "template": "fastfetch-%PLATFORM%-%ARCH%.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH% --strip-components=2"
+    ],
+    "bins": [
+        "bin/fastfetch",
+        "bin/flashfetch"
+    ]
+}
