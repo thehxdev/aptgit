@@ -21,8 +21,7 @@ func init() {
 func main() {
 	allMds, err := gpkg.ReadMdFile()
 	if err != nil {
-		log.Wrn.Println(err)
-		log.Wrn.Println("failed to read packages metadata file. using default empy metadata...")
+		log.Wrn.Println("using empty metadata...")
 	}
 	subcmdName := subcmd.Name()
 
