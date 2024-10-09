@@ -102,7 +102,7 @@ func readDefinitionFile(p string) (*PkgInfo, error) {
 func (gp *Gpkg) GetArch() string {
 	a := runtime.GOARCH
 	if garch, ok := gp.Info.ArchMap[a]; ok {
-		return garch
+		a = garch
 	}
 	return a
 }
@@ -110,7 +110,7 @@ func (gp *Gpkg) GetArch() string {
 func (gp *Gpkg) GetPlatform() string {
 	p := runtime.GOOS
 	if gplat, ok := gp.Info.PlatformMap[p]; ok {
-		return gplat
+		p = gplat
 	}
 	return p
 }
