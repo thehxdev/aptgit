@@ -1,0 +1,18 @@
+{
+    "repository": "zigtools/zls",
+    "platform": {
+        "darwin": "macos"
+    },
+    "arch": {
+        "386": "x86",
+        "amd64": "x86_64",
+        "arm64": "aarch64"
+    },
+    "template": "zls-%ARCH%-%PLATFORM%.tar.xz",
+    "install": [
+        "tar -xJf %FILE% -C %INSTALL_PATH%"
+    ],
+    "bins": [
+        "zls"
+    ]
+}
