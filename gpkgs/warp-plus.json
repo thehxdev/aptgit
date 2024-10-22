@@ -1,0 +1,13 @@
+{
+    "repository": "bepass-org/warp-plus",
+    "arch": {
+        "arm": "arm7"
+    },
+    "template": "warp-plus_%PLATFORM%-%ARCH%.zip",
+    "install": [
+        "unzip %FILE% -d %INSTALL_PATH%"
+    ],
+    "bins": [
+        "warp-plus"
+    ]
+}
