@@ -1,0 +1,12 @@
+{
+    "repository": "junegunn/fzf",
+    "template": "fzf-%VERSION%-%PLATFORM%_%ARCH%.tar.gz",
+    "tagRegexp": "(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH%"
+    ],
+    "bins": [
+        "fzf"
+    ]
+}
+

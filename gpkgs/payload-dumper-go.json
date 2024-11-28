@@ -1,0 +1,14 @@
+{
+    "repository": "ssut/payload-dumper-go",
+    "arch": {
+        "arm": "armv7"
+    },
+    "template": "payload-dumper-go_%TAGNAME%_%PLATFORM%_%ARCH%.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH%"
+    ],
+    "bins": [
+        "payload-dumper-go"
+    ]
+}
+
