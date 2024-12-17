@@ -1,0 +1,15 @@
+{
+    "repository": "helix-editor/helix",
+    "arch": {
+        "amd64": "x86_64",
+        "arm64": "aarch64"
+    },
+    "template": "helix-%TAGNAME%-%ARCH%-%PLATFORM%.tar.xz",
+    "install": [
+        "tar -xJf %FILE% -C %INSTALL_PATH% --strip-components=1"
+    ],
+    "bins": [
+        "hx"
+    ]
+}
+

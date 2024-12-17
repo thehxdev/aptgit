@@ -1,0 +1,10 @@
+{
+    "repository": "ipfs/kubo",
+    "template": "kubo_%TAGNAME%_%PLATFORM%-%ARCH%.tar.gz",
+    "install": [
+        "tar -xzf %FILE% -C %INSTALL_PATH% --strip-components=1"
+    ],
+    "bins": [
+        "ipfs"
+    ]
+}
